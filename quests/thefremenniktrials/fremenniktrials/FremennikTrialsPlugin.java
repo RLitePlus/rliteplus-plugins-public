@@ -59,7 +59,6 @@ public final class FremennikTrialsPlugin extends Plugin
 	private boolean journalSynced;
 	private int questProgress;
 	private volatile boolean startRequested;
-	private boolean ownsRecording;
 	private Widget hoveredLegacy;
 	private int hoverTick;
 	private int stableTicks, sceneBaseX = -1, sceneBaseY = -1, scenePlane = -1;
@@ -832,7 +831,6 @@ public final class FremennikTrialsPlugin extends Plugin
 		try{if(huntStarted&&draugen!=null){call(draugen,"stopEncounter");}}catch(RuntimeException ignored){ }
 		try{if(guardian!=null){call(guardian,"releasePreparedCombat");}}catch(RuntimeException ignored){ }
 		pending=null;pendingDescription=null;supplies=null;huntStarted=false;status=reason;
-		if(ownsRecording){configManager.setConfiguration("rsprox","recording",false);ownsRecording=false;}
 	}
 	private void fail(String reason){stop("Error: "+reason);error=reason;client.addChatMessage(ChatMessageType.GAMEMESSAGE,"","<col=ff0000>Error: "+reason+"</col>","");}
 	public Map<String,Object> agentControlCommands(){return Map.of("start",Map.of(),"stop",Map.of());}
@@ -847,10 +845,6 @@ public final class FremennikTrialsPlugin extends Plugin
 			walker=null;walkerPlugin=null;routeToken=null;bind();ensureFreeWalker();
 			require(client.getGameState()==GameState.LOGGED_IN,"Log in before starting");
 			require(client.getWorldType().contains(WorldType.MEMBERS),"The quest requires a members world");
-			if(!"true".equals(configManager.getConfiguration("rsprox","recording")))
-			{
-				configManager.setConfiguration("rsprox","recording",true);ownsRecording=true;
-			}
 			startRequested=false;running=true;error=null;pending=null;pendingDescription=null;stableTicks=0;
 			quest=null;step=null;stepName="";delegatedStep=null;pendingAttack=null;lastCombatIdentity=null;
 			combatPrepared=false;emptyPrepared=false;journalSynced=false;questProgress=client.getVarpValue(347);status="Preflight";
